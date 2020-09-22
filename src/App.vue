@@ -26,6 +26,11 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+
+  // Appインスタンス生成前に一度だけ実行されます
+  beforeCreate () {
+    this.$store.dispatch('loadSettings')
+  }
 }
 </script>

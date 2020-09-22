@@ -35,17 +35,15 @@ export default {
       /** 入力したデータが有効かどうか */
       valid: false,
       /** 設定 */
-      settings: {
-        apiUrl: '',
-        authToken: ''
-      }
+     settings: { ...this.$store.state.settings }
     }
   },
 
   methods: {
-    onClickSave () {
-      // あとで実装
-    }
+    /** 保存ボタンがクリックされたとき */
+   onClickSave () {
+     this.$store.dispatch('saveSettings', { settings: this.settings })
+   }
   }
 }
 </script>
