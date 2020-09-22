@@ -31,10 +31,10 @@
               no-title
               scrollable
             >
-              <v-spacer/>
-              <v-btn text color="grey" @click="menu = false">キャンセル</v-btn>
-              <v-btn text color="primary" @click="$refs.menu.save(yearMonth)">選択</v-btn>
-            </v-date-picker>
+            <v-spacer/>
+           <v-btn text color="grey" @click="menu = false">キャンセル</v-btn>
+           <v-btn text color="primary" @click="onSelectMonth">選択</v-btn>
+         </v-date-picker>
           </v-menu>
         </v-col>
         <v-spacer/>
@@ -58,6 +58,10 @@
         :items-per-page="30"
         mobile-breakpoint="0"
       >
+      <!-- 日付列 -->
+ <template v-slot:item.date="{ item }">
+   {{ parseInt(item.date.slice(-2)) + '日' }}
+ </template>
       </v-data-table>
     </v-card>
     <!-- 追加／編集ダイアログ -->
@@ -66,6 +70,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import ItemDialog from '../components/ItemDialog.vue'
 
 export default {
@@ -89,15 +94,15 @@ export default {
       /** 選択年月 */
       yearMonth: `${year}-${month}`,
       /** テーブルに表示させるデータ */
-      tableData: [
-        /** サンプルデータ */
-        { date: '2020-09-01', temperature:38.6, memo: 'メモ' },
-        { date: '2020-09-02', temperature:38.2, memo: 'メモ2' }
-      ]
+      tableData: []
     }
   },
 
   computed: {
+    ...mapState({
+        /** 家計簿データ */
+        abData: state => state.abData
+      }),
     /** テーブルのヘッダー設定 */
     tableHeaders () {
       return [
@@ -114,10 +119,36 @@ export default {
   },
 
   methods: {
+        ...mapActions([
+          /** 家計簿データを取得 */
+          'fetchAbData'
+        ]),
+
+        /** 表示させるデータを更新します */
+        updateTable () {
+          const yearMonth = this.yearMonth
+          const list = this.abData[yearMonth]
+
+          if (list) {
+            this.tableData = list
+          } else {
+            this.fetchAbData({ yearMonth })
+            this.tableData = this.abData[yearMonth]
+          }
+        },
+
+        /** 月選択ボタンがクリックされたとき */
+        onSelectMonth () {
+          this.$refs.menu.save(this.yearMonth)
+          this.updateTable()
+        },
      /** 追加ボタンがクリックされたとき */
      onClickAdd () {
        this.$refs.itemDialog.open('add')
-     }
+     },
+     created () {
+   this.updateTable()
+ }
    }
 }
 </script>

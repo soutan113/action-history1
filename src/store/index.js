@@ -8,6 +8,8 @@ Vue.use(Vuex)
  * Vuexの状態
  */
 const state = {
+  /** 家計簿データ */
+    abData: {},
   /** 設定 */
   settings: {
     apiUrl: '',
@@ -20,6 +22,19 @@ const state = {
  * ActionsからStateを更新するときに呼ばれます
  */
 const mutations = {
+  /** 指定年月の家計簿データをセットします */
+   setAbData (state, { yearMonth, list }) {
+     state.abData[yearMonth] = list
+   },
+
+   /** データを追加します */
+   addAbData (state, { item }) {
+     const yearMonth = item.date.slice(0, 7)
+     const list = state.abData[yearMonth]
+     if (list) {
+       list.push(item)
+     }
+   },
   /** 設定を保存します */
   saveSettings (state, { settings }) {
     state.settings = { ...settings }
@@ -41,6 +56,22 @@ const mutations = {
  * 画面から呼ばれ、Mutationをコミットします
  */
 const actions = {
+  /** 指定年月の家計簿データを取得します */
+  fetchAbData ({ commit }, { yearMonth }) {
+    // サンプルデータを初期値として入れる
+    const list = [
+      /** サンプルデータ */
+      { date: `${yearMonth}-01`, temperature:38.7, memo: 'メモ' },
+      { date: `${yearMonth}-02`, temperature:38.2, memo: 'メモ2' }
+    ]
+    commit('setAbData', { yearMonth, list })
+  },
+
+  /** データを追加します */
+  addAbData ({ commit }, { item }) {
+    commit('addAbData', { item })
+  },
+
   /** 設定を保存します */
   saveSettings ({ commit }, { settings }) {
     commit('saveSettings', { settings })
