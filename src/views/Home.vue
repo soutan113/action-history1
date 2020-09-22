@@ -40,10 +40,10 @@
         <v-spacer/>
         <!-- 追加ボタン -->
         <v-col class="text-right" cols="4">
-          <v-btn dark color="green">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </v-col>
+  <v-btn dark color="green" @click="onClickAdd">
+    <v-icon>mdi-plus</v-icon>
+  </v-btn>
+</v-col>
       </v-card-title>
       <!-- テーブル -->
       <v-data-table
@@ -60,12 +60,19 @@
       >
       </v-data-table>
     </v-card>
+    <!-- 追加／編集ダイアログ -->
+       <ItemDialog ref="itemDialog"/>
   </div>
 </template>
 
 <script>
+import ItemDialog from '../components/ItemDialog.vue'
+
 export default {
   name: 'Home',
+  components: {
+    ItemDialog
+  },
 
   data () {
     const today = new Date()
@@ -104,6 +111,13 @@ export default {
     footerProps () {
       return { itemsPerPageText: '', itemsPerPageOptions: [] }
     }
-  }
+  },
+
+  methods: {
+     /** 追加ボタンがクリックされたとき */
+     onClickAdd () {
+       this.$refs.itemDialog.open('add')
+     }
+   }
 }
 </script>
