@@ -45,46 +45,13 @@
               <v-btn text color="primary" @click="$refs.menu.save(date)">選択</v-btn>
             </v-date-picker>
           </v-menu>
-          <!-- タイトル -->
-          <v-text-field
-            label="タイトル"
-            v-model.trim="title"
-            :counter="20"
-            :rules="titleRules"
-          />
-          <!-- 収支 -->
-          <v-radio-group
-            row
-            v-model="inout"
-            hide-details
-            @change="onChangeInout"
-          >
-            <v-radio label="収入" value="income"/>
-            <v-radio label="支出" value="outgo"/>
-          </v-radio-group>
+
           <!-- カテゴリ -->
           <v-select
-            label="カテゴリ"
-            v-model="category"
-            :items="categoryItems"
+            label="体温"
+            v-model="temperature"
+            :items="temperatureItems"
             hide-details
-          />
-          <!-- タグ -->
-          <v-select
-            label="タグ"
-            v-model="tags"
-            :items="tagItems"
-            multiple
-            chips
-            :rules="[tagRule]"
-          />
-          <!-- 金額 -->
-          <v-text-field
-            label="金額"
-            v-model.number="amount"
-            prefix="￥"
-            pattern="[0-9]*"
-            :rules="amountRules"
           />
           <!-- メモ -->
           <v-text-field
@@ -137,43 +104,17 @@ export default {
 
       /** 操作タイプ 'add' or 'edit' */
       actionType: 'add',
-      /** id */
-      id: '',
       /** 日付 */
       date: '',
-      /** タイトル */
-      title: '',
-      /** 収支 'income' or 'outgo' */
-      inout: '',
       /** カテゴリ */
-      category: '',
-      /** タグ */
-      tags: [],
-      /** 金額 */
-      amount: 0,
+      temperature: '',
       /** メモ */
       memo: '',
 
-      /** 収支カテゴリ一覧 */
-      incomeItems: ['カテ1', 'カテ2'],
-      outgoItems: ['カテ3', 'カテ4'],
       /** 選択カテゴリ一覧 */
-      categoryItems: [],
-      /** タグリスト */
-      tagItems: ['タグ1', 'タグ2'],
-      /** 編集前の年月（編集時に使う） */
-      beforeYM: '',
+      temperatureItems: [36.0, 36.1, 36.2, 36.3, 36.4, 36.5, 36.6, 36.7, 36.8, 36.9, 37.0, 37.1, 37.2, 37.3, 37.4, '37.5以上'],
 
       /** バリデーションルール */
-      titleRules: [
-        v => v.trim().length > 0 || 'タイトルは必須です',
-        v => v.length <= 20 || '20文字以内で入力してください'
-      ],
-      tagRule: v => v.length <= 5 || 'タグは5種類以内で選択してください',
-      amountRules: [
-        v => v >= 0 || '金額は0以上で入力してください',
-        v => Number.isInteger(v) || '整数で入力してください'
-      ],
       memoRule: v => v.length <= 50 || 'メモは50文字以内で入力してください'
     }
   },
@@ -211,15 +152,6 @@ export default {
     onClickAction () {
       // あとで実装
     },
-    /** 収支が切り替わったとき */
-    onChangeInout () {
-      if (this.inout === 'income') {
-        this.categoryItems = this.incomeItems
-      } else {
-        this.categoryItems = this.outgoItems
-      }
-      this.category = this.categoryItems[0]
-    },
     /** フォームの内容を初期化します */
     resetForm (item = {}) {
       const today = new Date()
@@ -227,21 +159,9 @@ export default {
       const month = ('0' + (today.getMonth() + 1)).slice(-2)
       const date = ('0' + today.getDate()).slice(-2)
 
-      this.id = item.id || ''
       this.date = item.date || `${year}-${month}-${date}`
-      this.title = item.title || ''
-      this.inout = item.income != null ? 'income' : 'outgo'
-
-      if (this.inout === 'income') {
-        this.categoryItems = this.incomeItems
-        this.amount = item.income || 0
-      } else {
-        this.categoryItems = this.outgoItems
-        this.amount = item.outgo || 0
-      }
 
       this.category = item.category || this.categoryItems[0]
-      this.tags = item.tags ? item.tags.split(',') : []
       this.memo = item.memo || ''
 
       this.$refs.form.resetValidation()
