@@ -139,19 +139,13 @@ export default {
       this.show = true
       this.actionType = actionType
       this.resetForm(item)
-
-      if (actionType === 'edit') {
-        this.beforeYM = item.date.slice(0, 7)
-      }
     },
     /** キャンセルがクリックされたとき */
     onClickClose () {
       this.show = false
     },
     /** 追加／更新がクリックされたとき */
-    onClickAction () {
-      // あとで実装
-    },
+    onClickAction () {},
     /** フォームの内容を初期化します */
     resetForm (item = {}) {
       const today = new Date()
@@ -161,7 +155,7 @@ export default {
 
       this.date = item.date || `${year}-${month}-${date}`
 
-      this.category = item.category || this.categoryItems[0]
+      this.temperature = item.temperature || this.tempratureItems[0]
       this.memo = item.memo || ''
 
       this.$refs.form.resetValidation()
